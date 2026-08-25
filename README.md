@@ -1,5 +1,10 @@
 # mem0-mcp-server
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
+[![Docker](https://img.shields.io/badge/Docker-Enabled-blue.svg)](https://www.docker.com/)
+[![MCP](https://img.shields.io/badge/Model%20Context%20Protocol-Compatible-purple.svg)](https://modelcontextprotocol.io/)
+[![Python](https://img.shields.io/badge/Python-3.12-yellow.svg)](https://www.python.org/)
+
 A self-hosted, 100% local, zero-external-API **Mem0 Memory Server** and **Web Management Dashboard** integrated as a Model Context Protocol (MCP) tool provider for **Antigravity (AGY)**, **Claude**, **Cursor**, **Windsurf**, and any MCP-compatible AI client.
 
 This system gives AI coding assistants long-term memory across conversations—persisting project architecture decisions, user preferences, coding guidelines, and technical facts.
@@ -22,8 +27,8 @@ This system gives AI coding assistants long-term memory across conversations—p
 ### 1. Clone & Start Container
 
 ```bash
-git clone https://github.com/<your-username>/mem0-mcp-server.git
-cd mem0-mcp-server
+git clone https://github.com/mkshuvo/mem0-local-server.git
+cd mem0-local-server
 
 # Build & launch container
 docker compose up -d --build
@@ -42,7 +47,7 @@ Add `mem0-mcp-server` to your MCP configuration file:
     "mem0": {
       "command": "/opt/homebrew/bin/python3",
       "args": [
-        "/path/to/mem0-mcp-server/mcp/mem0_mcp.py"
+        "/path/to/mem0-local-server/mcp/mem0_mcp.py"
       ],
       "env": {
         "MEM0_SERVER_URL": "http://localhost:28842"
@@ -59,7 +64,7 @@ Add `mem0-mcp-server` to your MCP configuration file:
     "mem0": {
       "command": "python3",
       "args": [
-        "/absolute/path/to/mem0-mcp-server/mcp/mem0_mcp.py"
+        "/absolute/path/to/mem0-local-server/mcp/mem0_mcp.py"
       ],
       "env": {
         "MEM0_SERVER_URL": "http://localhost:28842"
@@ -88,7 +93,7 @@ Add `mem0-mcp-server` to your MCP configuration file:
 ## 📁 Repository Structure
 
 ```
-mem0-mcp-server/
+mem0-local-server/
 ├── Dockerfile                  # Container definition (FastEmbed + Qdrant)
 ├── docker-compose.yml          # Compose file (Port 28842 + persistent ./data)
 ├── requirements.txt            # Python backend dependencies
@@ -115,4 +120,4 @@ mem0-mcp-server/
 
 ## 📄 License
 
-MIT License. Free for personal and commercial use.
+This project is licensed under the [MIT License](LICENSE) - see the LICENSE file for details.
