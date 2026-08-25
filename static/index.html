@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mem0 Memory Manager & Hub</title>
+  <link rel="stylesheet" href="/static/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+</head>
+<body class="dark-theme">
+  <div class="app-container">
+    <!-- Top Header -->
+    <header class="top-header">
+      <div class="brand">
+        <div class="logo-icon">🧠</div>
+        <div class="brand-text">
+          <h1>Mem0 Manager</h1>
+          <span class="subtitle">Antigravity Cross-Conversation Long-Term Memory</span>
+        </div>
+      </div>
+      <div class="header-stats" id="headerStats">
+        <div class="stat-pill"><span class="stat-num" id="statTotal">0</span> memories</div>
+        <div class="stat-pill"><span class="stat-num" id="statProjects">0</span> projects</div>
+        <div class="stat-pill status-healthy"><span class="pulse-dot"></span> Port 28842 Active</div>
+      </div>
+      <div class="header-actions">
+        <button class="btn btn-secondary btn-sm" id="btnExport" title="Export memories backup">Export JSON</button>
+        <button class="btn btn-secondary btn-sm" id="btnImport" title="Import memories backup">Import</button>
+        <button class="btn btn-primary btn-sm" id="btnOpenAddModal">+ Add Memory</button>
+      </div>
+    </header>
+
+    <!-- Search & Filter Controls -->
+    <section class="controls-section">
+      <div class="search-bar-wrapper">
+        <span class="search-icon">🔍</span>
+        <input type="text" id="searchInput" placeholder="Search memories semantically or by keywords..." />
+        <button class="btn btn-primary" id="btnSearch">Search</button>
+        <button class="btn btn-secondary" id="btnResetSearch" style="display:none;">Clear</button>
+      </div>
+
+      <div class="filters-row">
+        <div class="filter-group">
+          <label>Project:</label>
+          <select id="filterProject">
+            <option value="all">All Projects</option>
+            <option value="fieldnation">fieldnation</option>
+            <option value="general">general</option>
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <label>Category:</label>
+          <select id="filterCategory">
+            <option value="all">All Categories</option>
+            <option value="architecture">Architecture</option>
+            <option value="guideline">Guideline</option>
+            <option value="preference">Preference</option>
+            <option value="decision">Decision</option>
+            <option value="fact">Fact</option>
+            <option value="general">General</option>
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <label>User:</label>
+          <select id="filterUser">
+            <option value="all">All Users</option>
+            <option value="default">default</option>
+          </select>
+        </div>
+
+        <div class="filter-actions">
+          <button class="btn btn-text" id="btnRefresh">🔄 Refresh</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Main Content: Memories List -->
+    <main class="memories-container">
+      <div class="memories-header">
+        <h2 id="viewTitle">All Memories</h2>
+        <span class="results-count" id="resultsCount">Loading...</span>
+      </div>
+
+      <div class="memories-grid" id="memoriesGrid">
+        <!-- Dynamic Memory Cards rendered here -->
+      </div>
+      
+      <div class="empty-state" id="emptyState" style="display: none;">
+        <div class="empty-icon">📭</div>
+        <h3>No memories found</h3>
+        <p>No memories match the current search or filters. Click "+ Add Memory" or let Antigravity add memories via MCP.</p>
+      </div>
+    </main>
+  </div>
+
+  <!-- Modal: Add/Edit Memory -->
+  <div class="modal-backdrop" id="memoryModal">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3 id="modalTitle">Add New Memory</h3>
+        <button class="modal-close" id="btnModalClose">&times;</button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="modalMemoryId" value="" />
+        
+        <div class="form-group">
+          <label for="modalContent">Memory Content / Fact *</label>
+          <textarea id="modalContent" rows="4" placeholder="Enter key context, coding pattern, user preference, or architectural decision..."></textarea>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="modalProject">Project</label>
+            <input type="text" id="modalProject" value="general" placeholder="e.g. fieldnation, personal" />
+          </div>
+          <div class="form-group">
+            <label for="modalCategory">Category</label>
+            <select id="modalCategory">
+              <option value="general">General</option>
+              <option value="architecture">Architecture</option>
+              <option value="guideline">Guideline</option>
+              <option value="preference">Preference</option>
+              <option value="decision">Decision</option>
+              <option value="fact">Fact</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="modalTags">Tags (comma separated)</label>
+          <input type="text" id="modalTags" placeholder="e.g. php8, docker, mcp, service-locator" />
+        </div>
+
+        <div class="form-group">
+          <label for="modalMetadata">Custom Metadata (JSON)</label>
+          <textarea id="modalMetadata" rows="2" placeholder='{"source": "antigravity"}'>{}</textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" id="btnModalCancel">Cancel</button>
+        <button class="btn btn-primary" id="btnModalSave">Save Memory</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: History Timeline -->
+  <div class="modal-backdrop" id="historyModal">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3>Memory Change History</h3>
+        <button class="modal-close" id="btnHistoryClose">&times;</button>
+      </div>
+      <div class="modal-body" id="historyList">
+        <!-- History items rendered here -->
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" id="btnHistoryDone">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Import Backup -->
+  <div class="modal-backdrop" id="importModal">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3>Import Memories Backup</h3>
+        <button class="modal-close" id="btnImportClose">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p class="import-help">Paste exported JSON payload below to import memories into your local vector database.</p>
+        <textarea id="importPayload" rows="8" placeholder='{"memories": [...]}'></textarea>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" id="btnImportCancel">Cancel</button>
+        <button class="btn btn-primary" id="btnImportSubmit">Import Memories</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>

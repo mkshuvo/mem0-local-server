@@ -1,0 +1,21 @@
+services:
+  mem0-server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: mem0-local-server
+    restart: unless-stopped
+    ports:
+      - "28842:28842"
+    environment:
+      - PORT=28842
+      - MEM0_DATA_DIR=/app/data
+      - MEM0_STATIC_DIR=/app/static
+    volumes:
+      - ./data:/app/data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:28842/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
