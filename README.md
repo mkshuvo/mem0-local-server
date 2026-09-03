@@ -5,7 +5,7 @@
 [![MCP](https://img.shields.io/badge/Model%20Context%20Protocol-Compatible-purple.svg)](https://modelcontextprotocol.io/)
 [![Python](https://img.shields.io/badge/Python-3.12-yellow.svg)](https://www.python.org/)
 
-A self-hosted, 100% local, zero-external-API **Mem0 Memory Server** and **Web Management Dashboard** integrated as a Model Context Protocol (MCP) tool provider for **Antigravity (AGY)**, **Claude**, **Cursor**, **Windsurf**, and any MCP-compatible AI client.
+A self-hosted, 100% local, zero-external-API **Mem0 Memory Server** and **Web Management Dashboard** integrated as a Model Context Protocol (MCP) tool provider for any MCP-compatible AI client (Claude, Cursor, Windsurf, Antigravity, etc.).
 
 This system gives AI coding assistants long-term memory across conversations—persisting project architecture decisions, user preferences, coding guidelines, and technical facts.
 

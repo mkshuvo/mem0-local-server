@@ -12,7 +12,7 @@ STATIC_DIR = os.getenv("MEM0_STATIC_DIR", "/app/static")
 app = FastAPI(
     title="Mem0 Local Memory Manager & Server",
     version="1.0.0",
-    description="100% Local Self-Hosted Memory Server for Antigravity"
+    description="100% Local Self-Hosted Memory Server for AI Assistants & Coding Agents"
 )
 
 # Enable CORS for local cross-origin access

@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """
-Mem0 Antigravity MCP Server (Pure Python Standard Library)
+Mem0 MCP Server (Pure Python Standard Library)
 Zero external dependencies required on the host.
-Communicates with Antigravity via MCP JSON-RPC 2.0 over stdio,
+Communicates with any MCP client (Claude, Cursor, Windsurf, Antigravity, etc.) via JSON-RPC 2.0 over stdio,
 and connects to the local Docker Mem0 server at http://localhost:28842.
 """
 
