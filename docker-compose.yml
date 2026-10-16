@@ -6,16 +6,53 @@ services:
     container_name: mem0-local-server
     restart: unless-stopped
     ports:
-      - "28842:28842"
+      - "127.0.0.1:28842:28842"
     environment:
       - PORT=28842
       - MEM0_DATA_DIR=/app/data
       - MEM0_STATIC_DIR=/app/static
+      - HF_HUB_OFFLINE=1
+      - DO_NOT_TRACK=1
+    dns:
+      - 127.0.0.1
+    cap_add:
+      - NET_ADMIN
+    command:
+      - python
+      - -c
+      - |
+        import ctypes, fcntl, os, socket, struct
+        SIOCDELRT = 0x890C
+        addr = struct.pack("=H2s4s8s", socket.AF_INET, b"\x00\x00", b"\x00\x00\x00\x00", b"\x00" * 8)
+        rt = struct.pack("=Q", 0) + addr * 3 + struct.pack("=H", 0) + b"\x00" * 62
+        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        try:
+            fcntl.ioctl(s.fileno(), SIOCDELRT, rt)
+        except OSError:
+            pass
+        s.close()
+        libc = ctypes.CDLL("libc.so.6", use_errno=True)
+        libc.prctl(24, 12, 0, 0, 0)
+        hdr = struct.pack("II", 0x20080522, 0)
+        buf = bytearray(24)
+        libc.capget(hdr, ctypes.byref(ctypes.c_char.from_buffer(buf)))
+        e0, p0, i0, e1, p1, i1 = struct.unpack("6I", buf)
+        m = ~(1 << 12) & 0xFFFFFFFF
+        libc.capset(hdr, struct.pack("6I", e0 & m, p0 & m, i0 & m, e1, p1, i1))
+        os.execvp("python", ["python", "-m", "uvicorn", "server.main:app", "--host", "0.0.0.0", "--port", "28842"])
     volumes:
       - ./data:/app/data
+    networks:
+      - mem0_isolated
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:28842/health"]
       interval: 15s
       timeout: 5s
       retries: 3
       start_period: 10s
+
+networks:
+  mem0_isolated:
+    driver: bridge
+    driver_opts:
+      com.docker.network.bridge.enable_ip_masquerade: "false"
